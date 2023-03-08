@@ -33,7 +33,7 @@
 
    - name: Allocate an IP Address
      gcp_compute_address:
-         state: create
+         state: present
          name: 'test-address1'
          region: 'us-west1'
          project: "{{ project }}"
