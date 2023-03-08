@@ -23,7 +23,7 @@
   gather_facts: false
 
   vars:
-    service_account_file: /home/sahootapan1707/auth.json
+    service_account_file: auth.json
     project: happy-376214
     auth_kind: serviceaccount
     scopes:
