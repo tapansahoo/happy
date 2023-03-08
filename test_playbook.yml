@@ -17,10 +17,26 @@
         sourceDetail: 
           RoleName: "{{ ExecuteRole }}"
 
-    - name: Display the config
-      debug:
-        msg: "The hostname is {{ sourceDetail.RoleName }}"
-    - name: Prepare Daemons MetricFilters template
-      template:
-        src:  /home/ec2-user/test.yml
-        dest: /home/ec2-user/hello/test.yml
+
+- name: Create IP address
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    service_account_file: /home/sahootapan1707/auth.json
+    project: happy-376214
+    auth_kind: serviceaccount
+    scopes:
+      - https://www.googleapis.com/auth/compute
+
+  tasks:
+
+   - name: Allocate an IP Address
+     gcp_compute_address:
+         state: create
+         name: 'test-address1'
+         region: 'us-west1'
+         project: "{{ project }}"
+         auth_kind: "{{ auth_kind }}"
+         service_account_file: "{{ service_account_file }}"
+         scopes: "{{ scopes }}"
