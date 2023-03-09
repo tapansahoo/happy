@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                 sh 'ansible-playbook test_playbook.yml -e  'ansible_python_interpreter=/usr/bin/python3''
+                 sh 'ansible-playbook test_playbook.yml -e  "{ansible_python_interpreter: /usr/bin/python3}"'
             }
         }
     }
