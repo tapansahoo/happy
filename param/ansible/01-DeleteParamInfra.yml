@@ -1,0 +1,8 @@
+- name: Delete Param Infra
+  hosts: param
+  gather_facts: false
+  tasks:
+    - include_role:
+        name: DeleteParamInfra
+
+    

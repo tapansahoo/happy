@@ -1,0 +1,165 @@
+- name: delete  Forwarding Rule 
+  shell: |
+    gcloud compute forwarding-rules delete platform-http-content-rule --global
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+
+- name: Delete a Load Balancer 
+  shell: |
+    gcloud compute target-http-proxies delete platform-http-lb-proxy  --global 	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: Delete a URL Map pointing to Backend 
+  shell: |
+    gcloud compute url-maps delete platform-map --global 
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+
+- name: Create Backend Services
+  shell: |
+    gcloud compute backend-services delete platform-backend  --global
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: Delete Health Check
+  shell: |
+    gcloud compute http-health-checks delete platform-http-basic-check
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: delete Instance group
+  shell: |
+    gcloud compute instance-groups managed delete platform 	--zone asia-south1-a 	
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: delete Instance template
+  shell: |
+    gcloud compute instance-templates delete param-platform-template
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+- name: Allow SSH to Bastion
+  shell: |
+    gcloud compute firewall-rules delete param-allow-ssh 
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+- name: Allow Internal Traffic
+  shell: |
+    gcloud compute firewall-rules delete param-allow-internal-network    
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+- name: Allow HTTP Traffic to Platform
+  shell: |
+    gcloud compute firewall-rules delete param-allow-http 
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+- name: Create Public Subnet
+  shell: |
+    gcloud compute networks subnets delete {{ PublicSubnet }} --region=asia-south1
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: Create private Subnet or Platform
+  shell: |
+    gcloud compute networks subnets delete {{ PrivateSubnet }}  --region=asia-south1
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+
+- name: delete VPC
+  shell: |
+    gcloud compute networks delete {{ VPC }}
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  ignore_errors: yes
+
+

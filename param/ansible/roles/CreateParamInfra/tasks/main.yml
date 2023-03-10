@@ -1,0 +1,171 @@
+
+- name: Check VPC
+  shell: |
+    gcloud compute networks create {{ VPC }} --subnet-mode custom
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Create Public Subnet
+  shell: |
+    gcloud compute networks subnets create {{ PublicSubnet }} --network {{ VPC }} --region {{ region }} --range  {{ PublicIPrange }}
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Create private Subnet or Platform
+  shell: |
+    gcloud compute networks subnets create {{ PrivateSubnet }}   --network {{ VPC }} --region {{ region }}  --range {{ PrivateIPrange }}
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Allow SSH to Bastion
+  shell: |
+    gcloud compute firewall-rules create param-allow-ssh 	--allow tcp:22 	--network {{ VPC }}
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Allow Internal Traffic
+  shell: |
+    gcloud compute firewall-rules create param-allow-internal-network --allow tcp:1-65535,udp:1-65535,icmp --source-ranges 10.0.0.0/16 --network {{ VPC }}    
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Allow HTTP Traffic to Platform
+  shell: |
+    gcloud compute firewall-rules create param-allow-http --allow tcp:80 	--network param-vpc --source-ranges 0.0.0.0/0 --target-tags=param-platform,param-api   
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Create Instance template
+  shell: |
+    gcloud compute instance-templates create param-platform-template --no-address --tags param-platform,private --machine-type e2-medium --image-project happy-376214 --image param --network param-vpc --subnet param-subnet-platform --region asia-south1  
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Create Instance group
+  shell: |
+    gcloud compute instance-groups managed create platform 	--base-instance-name param-platform 	--zone asia-south1-a 	--template param-platform-template 	--size 2
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Create Health Check
+  shell: |
+    gcloud compute http-health-checks create platform-http-basic-check	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Create Backend Services
+  shell: |
+    gcloud compute backend-services create platform-backend   --protocol HTTP   --load-balancing-scheme EXTERNAL   --global   --http-health-checks platform-http-basic-check	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Add Platform Group as the Backend -1 
+  shell: |
+    gcloud compute backend-services add-backend platform-backend   --global   --instance-group-zone asia-south1-a     --instance-group platform 	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Add Platform Group as the Backend -2 
+  shell: |
+    gcloud compute instance-groups set-named-ports platform 	--zone asia-south1-a 	--named-ports http:80 	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Create a URL Map pointing to Backend 
+  shell: |
+    gcloud compute url-maps create platform-map  --default-service platform-backend 	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+
+- name: Create a Load Balancer 
+  shell: |
+    gcloud compute target-http-proxies create platform-http-lb-proxy  --url-map platform-map 	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+
+- name: Create a Forwarding Rule 
+  shell: |
+    gcloud compute forwarding-rules create platform-http-content-rule --global  --target-http-proxy platform-http-lb-proxy --ports 80  	
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"

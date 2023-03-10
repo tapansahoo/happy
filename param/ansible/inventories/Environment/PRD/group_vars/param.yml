@@ -1,0 +1,5 @@
+service_account_file: /home/sahootapan1707/auth.json
+project: happy-376214
+auth_kind: serviceaccount
+scopes:
+  - https://www.googleapis.com/auth/compute

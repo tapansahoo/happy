@@ -1,0 +1,24 @@
+- name: Test Playbook
+  gather_facts: false
+  hosts: localhost
+  vars: 
+    ExecuteRole: "Tapan"
+    EnvPrefix: "EnvPrefix"
+    CustomerPrefix: "CustomerPrefix"
+    logGroup: "logGroup"
+    ExtensionsBundleMetricFatalErrorPattern: "ExtensionsBundleMetricFatalErrorPattern"
+    BatchDaemonDefinitions: ["RAM", "HARI"]
+  tasks:
+
+    - name: Test1
+      set_fact:
+        sourceDetail: 
+          RoleName: "{{ ExecuteRole }}"
+
+    - name: Display the config
+      debug:
+        msg: "The hostname is {{ sourceDetail.RoleName }}"
+    - name: Prepare Daemons MetricFilters template
+      template:
+        src:  /home/ec2-user/test.yml
+        dest: /home/ec2-user/hello/test.yml
