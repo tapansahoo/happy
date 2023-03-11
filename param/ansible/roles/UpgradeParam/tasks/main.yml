@@ -1,7 +1,4 @@
 
-- set_fact:
-    image : "param"
-
 - name: Get backend-services details
   shell: |
     gcloud compute backend-services list  platform-backend --global
