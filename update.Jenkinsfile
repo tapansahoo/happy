@@ -1,10 +1,10 @@
 def runCodeBuild() {
   
       script {
-          sh(script: """
-         
-           export image=\$(cat /var/lib/jenkins/jobs/${env.JOB_BASE_NAME}/builds/${currentBuild.number}/archive/prod-platform.properties)
+          sh(script: """         
+          export image=\$(cat /var/lib/jenkins/jobs/${env.JOB_BASE_NAME}/builds/${currentBuild.number}/archive/prod-platform.properties)
 		  echo \$image
+		  ansible-playbook  param/ansible/02-UpdateParam.yml -i param/ansible/inventories/Environment/PRD/ --extra-vars "image=$image"
         """ )
       }
     
@@ -37,8 +37,7 @@ pipeline {
             }
         }
 		
-		stage('Buils') {
-        
+		stage('Buils') {        
        
             steps {
                   runCodeBuild()
