@@ -1,4 +1,3 @@
-
 - name: Check VPC
   shell: |
     gcloud compute networks create {{ VPC }} --subnet-mode custom
@@ -9,6 +8,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Create Public Subnet
@@ -21,6 +21,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Create private Subnet or Platform
@@ -33,6 +34,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Allow SSH to Bastion
@@ -45,6 +47,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Allow Internal Traffic
@@ -57,6 +60,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Allow HTTP Traffic to Platform
   shell: |
@@ -68,6 +72,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Create Instance template
@@ -80,6 +85,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Create Instance group
   shell: |
@@ -91,6 +97,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Create Health Check
   shell: |
@@ -102,6 +109,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Create Backend Services
   shell: |
@@ -113,6 +121,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Add Platform Group as the Backend -1 
   shell: |
@@ -124,6 +133,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Add Platform Group as the Backend -2 
   shell: |
@@ -135,6 +145,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Create a URL Map pointing to Backend 
   shell: |
@@ -146,6 +157,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 
 - name: Create a Load Balancer 
@@ -158,6 +170,7 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
 
 - name: Create a Forwarding Rule 
   shell: |
@@ -169,3 +182,4 @@
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
+  ignore_errors: Yes
