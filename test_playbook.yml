@@ -57,7 +57,7 @@
   tasks:   
     - name: Get existing instance group
       shell: |
-        gcloud compute backend-services list  platform-backend --global  
+        gcloud compute addresses create abcde  --global  --ip-version IPV4  
       args:
         executable: /bin/bash
       environment:
