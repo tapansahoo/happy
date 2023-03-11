@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Copy Archive') {
          steps {
-           copyArtifacts filter: 'prod-platform.properties', fingerprintArtifacts: true, projectName: 'createimage', selector: lastSuccessful
+           copyArtifacts filter: 'prod-platform.properties', fingerprintArtifacts: true, projectName: 'createimage', selector: 'lastSuccessful'
         }
     }
         stage('Manual Approval') {
