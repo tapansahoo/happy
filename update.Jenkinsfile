@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Copy Archive') {
          steps {
-           copyArtifacts(filter: 'prod-platform.properties', projectName: 'createimage', selector: specific("${lastSuccessful.number}"))
+           copyArtifacts(filter: 'prod-platform.properties', projectName: 'createimage')
         }
     }
         stage('Manual Approval') {
