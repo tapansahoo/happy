@@ -2,8 +2,9 @@ def runCodeBuild() {
   
       script {
           sh(script: """
-          echo "hello"
          
+          export image=\$(cat archive/prod-platform.properties)
+		  echo \$image
         """ )
       }
     
