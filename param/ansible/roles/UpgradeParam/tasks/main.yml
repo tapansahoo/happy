@@ -1,159 +1,176 @@
 
-- name: Get backend-services details
-  shell: |
-    gcloud compute backend-services list  platform-backend --global
-  args:
-    executable: /bin/bash
-  environment:
+# - set_fact:
+#     image : "param-green"
+
+- name: Get backend services
+  gcp_compute_backend_service_facts:
     project: "{{ project }}"
     auth_kind: "{{ auth_kind }}"
     service_account_file: "{{ service_account_file }}"
     scopes: "{{ scopes }}"
-  register: backendservices
+  register: backend_services
 
-- debug:
-    msg: "{{  backendservices.stdout_lines[1] }}"
-
-- set_fact:
-   strtoremove : "{{'BACKENDS: ' + zone + '/instanceGroups/' }}"
-   
-- debug:
-    msg: "{{  strtoremove }}"
-    
-- debug:
-    msg: "{{  backendservices.stdout_lines[1] | replace( strtoremove,'')  }}"
-    
-
-- name: Get existing instance group
-  shell: |
-    gcloud compute instance-groups managed list  
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: existingInstanceGroup
-
-- debug:
-    msg: "{{  existingInstanceGroup.stdout_lines[0] | replace('NAME: ','') }}"
-
-- set_fact:
-   existing_InstanceGroup : "{{  existingInstanceGroup.stdout_lines[0] | replace('NAME: ','') }}"
-
-- name: Get existing instance template
-  shell: |
-    gcloud compute instance-templates list  
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: existingInstanceTemplate
+- name: Print backend service names
+  debug:
+    msg: "{{ backend_services }}"
  
-- debug:
-    msg: "{{ existingInstanceTemplate.stdout_lines[0] | replace('NAME: ','') }}"
 
-- set_fact:
-    existing_InstanceTemplate : "{{ existingInstanceTemplate.stdout_lines[0] | replace('NAME: ','') }}"
+# - name: Get backend-services details
+#   shell: |
+#     gcloud compute backend-services list  platform-backend --global
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   register: backendservices
+
+# - debug:
+#     msg: "{{  backendservices.stdout_lines[1] }}"
+
+# - set_fact:
+#    strtoremove : "{{'BACKENDS: ' + zone + '/instanceGroups/' }}"
+   
+# - debug:
+#     msg: "{{  strtoremove }}"
+    
+# - debug:
+#     msg: "{{  backendservices.stdout_lines[1] | replace( strtoremove,'')  }}"
+    
+
+# - name: Get existing instance group
+#   shell: |
+#     gcloud compute instance-groups managed list  
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   register: existingInstanceGroup
+
+# - debug:
+#     msg: "{{  existingInstanceGroup.stdout_lines[0] | replace('NAME: ','') }}"
+
+# - set_fact:
+#    existing_InstanceGroup : "{{  existingInstanceGroup.stdout_lines[0] | replace('NAME: ','') }}"
+
+# - name: Get existing instance template
+#   shell: |
+#     gcloud compute instance-templates list  
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   register: existingInstanceTemplate
+ 
+# - debug:
+#     msg: "{{ existingInstanceTemplate.stdout_lines[0] | replace('NAME: ','') }}"
+
+# - set_fact:
+#     existing_InstanceTemplate : "{{ existingInstanceTemplate.stdout_lines[0] | replace('NAME: ','') }}"
 
 
-- name: Create Instance template
-  shell: |
-    gcloud compute instance-templates create {{ 'param-platform-template-' + image }} --no-address --tags param-platform,private --machine-type e2-medium --image-project happy-376214 --image {{image}} --network param-vpc --subnet param-subnet-platform --region asia-south1  
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: newInstancetemplate
+# - name: Create Instance template
+#   shell: |
+#     gcloud compute instance-templates create {{ 'param-platform-template-' + image }} --no-address --tags param-platform,private --machine-type e2-medium --image-project happy-376214 --image {{image}} --network param-vpc --subnet param-subnet-platform --region asia-south1  
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   register: newInstancetemplate
+#   ignore_errors: yes
 
-- debug:
-    msg: "{{ newInstancetemplate.stdout_lines[0] | replace('NAME: ','') }}"
+# - debug:
+#     msg: "{{ newInstancetemplate.stdout_lines[0] | replace('NAME: ','') }}"
      
-- set_fact:
-    new_instancetemplate : "{{ newInstancetemplate.stdout_lines[0] | replace('NAME: ','') }}"
+# - set_fact:
+#     new_instancetemplate : "{{ newInstancetemplate.stdout_lines[0] | replace('NAME: ','') }}"
 
-- name: Create Instance group
-  shell: |
-    gcloud compute instance-groups  managed create {{ 'platform-' + image }} 	--zone asia-south1-a 	--template {{ new_instancetemplate  }}	--size 2
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: newInstancegroup
+# - name: Create Instance group
+#   shell: |
+#     gcloud compute instance-groups  managed create {{ 'platform-' + image }} 	--zone asia-south1-a 	--template {{ new_instancetemplate  }}	--size 2
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   register: newInstancegroup
 
-- debug:
-    msg: "{{ newInstancegroup.stdout_lines[0] | replace('NAME: ','') }}"
+# # - debug:
+# #     msg: "{{ newInstancegroup.stdout_lines[0] | replace('NAME: ','') }}"
        
-- set_fact:
-    new_instancegroup : "{{ newInstancegroup.stdout_lines[0] | replace('NAME: ','') }}"
+# - set_fact:
+#     new_instancegroup : "{{ newInstancegroup.stdout_lines[0] | replace('NAME: ','') }}"
 
 
-- name: Remove the existing instance-group form the backaend-service 
-  shell: |
-    gcloud compute backend-services remove-backend platform-backend   --global   --instance-group-zone asia-south1-a   --instance-group  {{ existing_InstanceGroup }}	
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
+# - name: Remove the existing instance-group form the backaend-service 
+#   shell: |
+#     gcloud compute backend-services remove-backend platform-backend   --global   --instance-group-zone asia-south1-a   --instance-group  {{ existing_InstanceGroup }}	
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
 
 
-- name: Add Platform Group as the Backend 
-  shell: |
-    gcloud compute backend-services add-backend platform-backend   --global   --instance-group-zone asia-south1-a     --instance-group {{ new_instancegroup }}
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
+# - name: Add Platform Group as the Backend 
+#   shell: |
+#     gcloud compute backend-services add-backend platform-backend   --global   --instance-group-zone asia-south1-a     --instance-group {{ new_instancegroup }}
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
 
-- name: Add Platform Group as the Backend -2 
-  shell: |
-    gcloud compute instance-groups set-named-ports {{ new_instancegroup }} 	--zone asia-south1-a 	--named-ports http:80 	
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
+# - name: Add Platform Group as the Backend -2 
+#   shell: |
+#     gcloud compute instance-groups set-named-ports {{ new_instancegroup }} 	--zone asia-south1-a 	--named-ports http:80 	
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
 
-- name: delete old Instance group
-  shell: |
-    gcloud compute instance-groups managed delete {{ existing_InstanceGroup }} --zone asia-south1-a 	
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
+# - name: delete old Instance group
+#   shell: |
+#     gcloud compute instance-groups managed delete {{ existing_InstanceGroup }} --zone asia-south1-a 	
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
 
-- name: delete Instance template
-  shell: |
-    gcloud compute instance-templates delete {{ existing_InstanceTemplate }}
-  args:
-    executable: /bin/bash
-  environment:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  ignore_errors: yes
+# - name: delete Instance template
+#   shell: |
+#     gcloud compute instance-templates delete {{ existing_InstanceTemplate }}
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     project: "{{ project }}"
+#     auth_kind: "{{ auth_kind }}"
+#     service_account_file: "{{ service_account_file }}"
+#     scopes: "{{ scopes }}"
+#   ignore_errors: yes
 
 
 
