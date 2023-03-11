@@ -2,33 +2,36 @@
 # - set_fact:
 #     image : "param-green"
 
-- name: Get backend services
-  gcp_compute_backend_service_facts:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: backend_services
 
-- name: Print backend service names
-  debug:
-    msg: "{{ backend_services }}"
- 
 
-# - name: Get backend-services details
-#   shell: |
-#     gcloud compute backend-services list  platform-backend --global
-#   args:
-#     executable: /bin/bash
-#   environment:
+
+# - name: Get backend services
+#   gcp_compute_backend_service_facts:
 #     project: "{{ project }}"
 #     auth_kind: "{{ auth_kind }}"
 #     service_account_file: "{{ service_account_file }}"
 #     scopes: "{{ scopes }}"
-#   register: backendservices
+#   register: backend_services
 
-# - debug:
-#     msg: "{{  backendservices.stdout_lines[1] }}"
+# - name: Print backend service names
+#   debug:
+#     msg: "{{ backend_services }}"
+ 
+
+- name: Get backend-services details
+  shell: |
+    gcloud compute backend-services list  platform-backend --global
+  args:
+    executable: /bin/bash
+  environment:
+    project: "{{ project }}"
+    auth_kind: "{{ auth_kind }}"
+    service_account_file: "{{ service_account_file }}"
+    scopes: "{{ scopes }}"
+  register: backendservices
+
+- debug:
+    msg: "{{  backendservices.stdout_lines[1] }}"
 
 # - set_fact:
 #    strtoremove : "{{'BACKENDS: ' + zone + '/instanceGroups/' }}"
