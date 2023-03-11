@@ -22,7 +22,7 @@ pipeline {
         
        
             steps {
-                  echo 'cat prod-platform.properties '
+                  cat prod-platform.properties
             }
         }
     }
