@@ -13,6 +13,9 @@ pipeline {
                 ok "Yes, we should."               
                                 
             }
+			steps {
+                  echo 'Aproved'
+            }
             
         }
         stage('Deploy') {
