@@ -32,7 +32,7 @@
 
   tasks:
     - name: Allocate an IP Address
-     gcp_compute_address:
+      gcp_compute_address:
          state: absent
          name: 'test-address1'
          region: 'us-west1'
