@@ -41,35 +41,14 @@
          service_account_file: "{{ service_account_file }}"
          scopes: "{{ scopes }}"
 
+    - name: Get backend services
+      gcp_compute_backend_service_facts:
+        project: "{{ project }}"
+        auth_kind: "{{ auth_kind }}"
+        service_account_file: "{{ service_account_file }}"
+        scopes: "{{ scopes }}"
+      register: backend_services
 
-- name: Create IP address 2
-  hosts: localhost
-  gather_facts: false
-
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-    service_account_file: auth.json
-    project: happy-376214
-    auth_kind: serviceaccount
-    scopes:
-      - https://www.googleapis.com/auth/compute
-
-
-- name: Get backend services
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-    service_account_file: auth.json
-    project: happy-376214
-    auth_kind: serviceaccount
-    scopes:
-      - https://www.googleapis.com/auth/compute
-  gcp_compute_backend_service_facts:
-    project: "{{ project }}"
-    auth_kind: "{{ auth_kind }}"
-    service_account_file: "{{ service_account_file }}"
-    scopes: "{{ scopes }}"
-  register: backend_services
-
-- name: Print backend service names
-  debug:
-    msg: "{{ backend_services }}"
+    - name: Print backend service names
+      debug:
+        msg: "{{ backend_services }}"
