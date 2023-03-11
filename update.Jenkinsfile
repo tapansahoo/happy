@@ -22,7 +22,7 @@ pipeline {
         
        
             steps {
-                  cat prod-platform.properties
+                  archiveArtifacts(artifacts: 'prod-platform.properties')
             }
         }
     }
