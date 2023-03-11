@@ -31,7 +31,6 @@
       - https://www.googleapis.com/auth/compute
 
   tasks:
-
    - name: Allocate an IP Address
      gcp_compute_address:
          state: absent
@@ -41,9 +40,28 @@
          auth_kind: "{{ auth_kind }}"
          service_account_file: "{{ service_account_file }}"
          scopes: "{{ scopes }}"
-		 
-  - name: Get backend-services details
-    shell: |
-      gcloud compute backend-services list  platform-backend --global
-    args:
-      executable: /bin/bash
+
+
+- name: Create IP address 2
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    service_account_file: auth.json
+    project: happy-376214
+    auth_kind: serviceaccount
+    scopes:
+      - https://www.googleapis.com/auth/compute
+
+  tasks:   
+    - name: Get existing instance group
+      shell: |
+        gcloud compute instance-groups managed list  
+      args:
+        executable: /bin/bash
+      environment:
+        project: "{{ project }}"
+        auth_kind: "{{ auth_kind }}"
+        service_account_file: "{{ service_account_file }}"
+        scopes: "{{ scopes }}"
