@@ -41,3 +41,9 @@
          auth_kind: "{{ auth_kind }}"
          service_account_file: "{{ service_account_file }}"
          scopes: "{{ scopes }}"
+		 
+  - name: Get backend-services details
+    shell: |
+      gcloud compute backend-services list  platform-backend --global
+    args:
+      executable: /bin/bash
