@@ -3,7 +3,7 @@ def runCodeBuild() {
       script {
           sh(script: """
           pwd
-          export image=\$(cat archive/prod-platform.properties)
+          export image=\$(cat builds//${currentBuild.number}/archive/prod-platform.properties)
 		  echo \$image
         """ )
       }
