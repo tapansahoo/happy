@@ -5,7 +5,7 @@ def runCodeBuild() {
       script {
           sh(script: """
          
-          export image=$(cat archive/prod-platform.properties)
+          export image=\$(cat archive/prod-platform.properties)
 		  echo $image
         """
       }
