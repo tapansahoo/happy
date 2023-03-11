@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                 sh 'ansible-playbook param/ansible/00-CreateParamInfra.yml -e  "{ansible_python_interpreter: /usr/bin/python3}"'
+                 sh 'ansible-playbook param/ansible/00-CreateParamInfra.yml  -i ansible/inventories/Environment/PRD/ -e  "{ansible_python_interpreter: /usr/bin/python3}"'
             }
         }
     }
