@@ -1,4 +1,4 @@
-service_account_file: auth.json
+service_account_file: /var/lib/jenkins/auth.json
 project: happy-376214
 auth_kind: serviceaccount
 scopes:
