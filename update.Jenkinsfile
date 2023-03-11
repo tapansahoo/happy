@@ -1,3 +1,16 @@
+
+
+def runCodeBuild() {
+  
+      script {
+          sh(script: """
+         
+          export image=$(cat archive/prod-platform.properties)
+		  echo $image
+        """
+      }
+    
+  }
 pipeline {
     agent any
 
@@ -18,11 +31,19 @@ pipeline {
             }
             
         }
-        stage('Deploy') {
+        stage('put artifact') {
         
        
             steps {
                   archiveArtifacts(artifacts: 'prod-platform.properties')
+            }
+        }
+		
+		stage('Buils') {
+        
+       
+            steps {
+                  runCodeBuild()
             }
         }
     }
