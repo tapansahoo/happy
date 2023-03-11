@@ -2,9 +2,8 @@ def runCodeBuild() {
   
       script {
           sh(script: """
-          pwd
-	  echo "Build number is ${currentBuild.number}"
-          export image=\$(cat builds//${currentBuild.number}/archive/prod-platform.properties)
+         
+           export image=\$(cat /var/lib/jenkins/jobs/${env.JOB_BASE_NAME}/builds/${currentBuild.number}/archive/prod-platform.properties)
 		  echo \$image
         """ )
       }
